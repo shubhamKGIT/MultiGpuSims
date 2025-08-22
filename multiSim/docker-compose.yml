@@ -1,0 +1,114 @@
+services:
+  carla0:
+    image: carlasim/carla:0.9.14
+    command: >
+      ./CarlaUE4.sh -RenderOffScreen -quality-level=Low
+      -carla-rpc-port=20000 -carla-streaming-port=20001 -nosound -prefernvidia
+    environment: { SDL_VIDEODRIVER: "offscreen", DISPLAY: "" }
+    ports: ["20000:20000", "20001:20001"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0"]
+              capabilities: ["gpu"]
+  carla1:
+    image: carlasim/carla:0.9.14
+    command: >
+      ./CarlaUE4.sh -RenderOffScreen -quality-level=Low
+      -carla-rpc-port=20100 -carla-streaming-port=20101 -nosound -prefernvidia
+    environment: { SDL_VIDEODRIVER: "offscreen", DISPLAY: "" }
+    ports: ["20100:20100", "20101:20101"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["1"]
+              capabilities: ["gpu"]
+  carla2:
+    image: carlasim/carla:0.9.14
+    command: >
+      ./CarlaUE4.sh -RenderOffScreen -quality-level=Low
+      -carla-rpc-port=20200 -carla-streaming-port=20201 -nosound -prefernvidia
+    environment: { SDL_VIDEODRIVER: "offscreen", DISPLAY: "" }
+    ports: ["20200:20200", "20201:20201"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["2"]
+              capabilities: ["gpu"]
+  carla3:
+    image: carlasim/carla:0.9.14
+    command: >
+      ./CarlaUE4.sh -RenderOffScreen -quality-level=Low
+      -carla-rpc-port=20300 -carla-streaming-port=20301 -nosound -prefernvidia
+    environment: { SDL_VIDEODRIVER: "offscreen", DISPLAY: "" }
+    ports: ["20300:20300", "20301:20301"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["3"]
+              capabilities: ["gpu"]
+  carla4:
+    image: carlasim/carla:0.9.14
+    command: >
+      ./CarlaUE4.sh -RenderOffScreen -quality-level=Low
+      -carla-rpc-port=20400 -carla-streaming-port=20401 -nosound -prefernvidia
+    environment: { SDL_VIDEODRIVER: "offscreen", DISPLAY: "" }
+    ports: ["20400:20400", "20401:20401"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["4"]
+              capabilities: ["gpu"]
+  carla5:
+    image: carlasim/carla:0.9.14
+    command: >
+      ./CarlaUE4.sh -RenderOffScreen -quality-level=Low
+      -carla-rpc-port=20500 -carla-streaming-port=20501 -nosound -prefernvidia
+    environment: { SDL_VIDEODRIVER: "offscreen", DISPLAY: "" }
+    ports: ["20500:20500", "20501:20501"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["5"]
+              capabilities: ["gpu"]
+  carla6:
+    image: carlasim/carla:0.9.14
+    command: >
+      ./CarlaUE4.sh -RenderOffScreen -quality-level=Low
+      -carla-rpc-port=20600 -carla-streaming-port=20601 -nosound -prefernvidia
+    environment: { SDL_VIDEODRIVER: "offscreen", DISPLAY: "" }
+    ports: ["20600:20600", "20601:20601"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["6"]
+              capabilities: ["gpu"]
+  carla7:
+    image: carlasim/carla:0.9.14
+    command: >
+      ./CarlaUE4.sh -RenderOffScreen -quality-level=Low
+      -carla-rpc-port=20700 -carla-streaming-port=20701 -nosound -prefernvidia
+    environment: { SDL_VIDEODRIVER: "offscreen", DISPLAY: "" }
+    ports: ["20700:20700", "20701:20701"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["7"]
+              capabilities: ["gpu"]
+  # ...repeat up to carla7 with device_ids ["7"] and ports 20700/20701

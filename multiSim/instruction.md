@@ -1,7 +1,8 @@
 
+## How to connet
 
-## If you want 8 totally separate scenarios/worlds/maps running at once (e.g., for throughput), 
-## launch 8 independent CARLA servers—each bound to one GPU and unique ports—then connect one client to each.
+You want 8 totally separate scenarios/worlds/maps running at once (e.g., for throughput),
+* launch 8 independent CARLA servers—each bound to one GPU and unique ports—then connect one client to each. *
 
 ## Start 8 servers (one per GPU)
 '''
