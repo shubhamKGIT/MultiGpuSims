@@ -3,22 +3,31 @@ Scripts to orchestrate containerized carla simulations in 2 modes
 
 
 ## -------------------------------------- ##
-## Single simulation multiple contianer
+## Single simulation multi-GPU (also called CARLA multi-GPU rendering option), 1 Primary & 8 Secondary servers
 
-docker-compose.yml launches 1 primary (CPU-only) + 8 secondaries (one per A100 GPU). 
-It uses clean porting, GPU pinning via NVIDIA_VISIBLE_DEVICES, and off-screen rendering.
-To orchestrate with docker-compose.yml, run:
+About: multi-GPU server mode where you launch one primary server and multiple secondary servers, each secondary tied to a GPU and rendering sensors for actors in the shared world. Clients only connect to the primary.
+
+In more detail:
+1. CARLA supports multi-GPU rendering mode (primary server + secondary servers).
+2. In this mode, one GPU handles physics + world, and additional GPUs handle sensor rendering in parallel.
+3. This means: multiple hero vehicles, each with heavy sensor suites (camera, LiDAR, semantic segmentation, etc.), can spread their rendering load across GPUs.
+4. You don’t need separate servers per hero vehicle — you run one world, multiple heroes, and CARLA distributes the sensor render tasks.
+
+### Workflows
 
 #### docker compose 
+docker-compose.yml launches 1 primary (CPU-only) + 8 secondaries (one per A100 GPU). 
+It uses clean porting, GPU pinning via NVIDIA_VISIBLE_DEVICES, and off-screen rendering.
+* To orchestrate with docker-compose.yml, run: * 
 '''
 docker compose up -d
 '''
-#### Check GPUs: 
+* Check GPUs: *
 '''
 watch -n1 nvidia-smi
 '''
 
-Purpose: run CARLA in multi-GPU mode.
+### Purpose: run CARLA in multi-GPU mode.
 One world only (all ego vehicles, traffic, pedestrians share the same physics world).
 Layout:
 1 primary server (-nullrhi, CPU only) → runs physics, synchronizes ticks.
@@ -38,7 +47,18 @@ python3 ./singleSim/singleSim_multiEgo.py
 ## ---------------------------------------------- ##
 ## Multiple Simulation, spawning multiple servers
 
-## Which should you use?
+
+## Why do what?
+### If you just want multiple controllable vehicles (for training, RL, AV testing, etc.):
+1. Run one CARLA server on one GPU.
+2. Spawn many heroes with unique role names.
+### If you want high-fidelity sensor rendering for many heroes:
+1. Use multi-GPU CARLA mode.
+2. Each GPU can handle rendering tasks for one or more heroes’ sensors, preventing one GPU from bottlenecking.
+
+
+## -------------------------------- ##
+## Which folder should you use?
 
 * singleSim *
 Need one coherent world with many interacting egos and lots of sensors?
@@ -49,14 +69,6 @@ Connect everybody to the primary. Let CARLA spread rendering across your 8 secon
 Need maximum throughput with different scenarios in parallel (map/weather/seed isolation)?
 Use 8 independent servers (B), one per GPU. Connect each client to its own port.
 
-## -------------------------------- ##
-## Why do what
-### If you just want multiple controllable vehicles (for training, RL, AV testing, etc.):
-1. Run one CARLA server on one GPU.
-2. Spawn many heroes with unique role names.
-### If you want high-fidelity sensor rendering for many heroes:
-1. Use multi-GPU CARLA mode.
-2. Each GPU can handle rendering tasks for one or more heroes’ sensors, preventing one GPU from bottlenecking.
 
 ## -------------------------------------------------------- ##
 ## Headless rendering gotchas on A100
