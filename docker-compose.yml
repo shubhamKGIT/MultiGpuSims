@@ -1,0 +1,203 @@
+version: "3.9"
+
+x-common-env: &common-env
+  # Required by NVIDIA Container Toolkit (no legacy 'runtime: nvidia' needed)
+  NVIDIA_DRIVER_CAPABILITIES: "compute,utility,graphics"
+  # Headless rendering
+  SDL_VIDEODRIVER: "offscreen"
+  DISPLAY: ""
+
+x-image: &carla-image carlasim/carla:0.9.14   # <-- change to your tag if different
+
+networks:
+  carla_net:
+
+services:
+  # ---------------------------
+  # Primary server (CPU-only)
+  # ---------------------------
+  primary:
+    image: *carla-image
+    container_name: carla_primary
+    command: >
+      ./CarlaUE4.sh
+      -nullrhi
+      -nosound
+      -quality-level=Low
+      -carla-rpc-port=2000
+      -carla-primary-port=2002
+      -prefernvidia
+    environment:
+      <<: *common-env
+      # Make sure primary doesn't bind any GPU
+      NVIDIA_VISIBLE_DEVICES: "none"
+    ports:
+      - "2000:2000"   # client RPC (connect your scripts here)
+      - "2001:2001"   # client streaming (kept for compatibility)
+      - "2002:2002"   # primary sync port for secondaries
+    networks: [carla_net]
+    restart: unless-stopped
+
+  # ---------------------------
+  # Secondary servers (GPU 0..7)
+  # ---------------------------
+  sec0:
+    image: *carla-image
+    container_name: carla_sec0
+    command: >
+      ./CarlaUE4.sh
+      -RenderOffScreen
+      -nosound
+      -quality-level=Low
+      -carla-rpc-port=3000
+      -carla-primary-host=primary
+      -carla-primary-port=2002
+      -ini:[/Script/Engine.RendererSettings]:r.GraphicsAdapter=0
+      -prefernvidia
+    environment:
+      <<: *common-env
+      NVIDIA_VISIBLE_DEVICES: "0"
+    # Expose its RPC/streaming only if you want to debug secondaries directly
+    ports: ["3000:3000","3001:3001"]
+    networks: [carla_net]
+    restart: unless-stopped
+
+  sec1:
+    image: *carla-image
+    container_name: carla_sec1
+    command: >
+      ./CarlaUE4.sh
+      -RenderOffScreen
+      -nosound
+      -quality-level=Low
+      -carla-rpc-port=3100
+      -carla-primary-host=primary
+      -carla-primary-port=2002
+      -ini:[/Script/Engine.RendererSettings]:r.GraphicsAdapter=1
+      -prefernvidia
+    environment:
+      <<: *common-env
+      NVIDIA_VISIBLE_DEVICES: "1"
+    ports: ["3100:3100","3101:3101"]
+    networks: [carla_net]
+    restart: unless-stopped
+
+  sec2:
+    image: *carla-image
+    container_name: carla_sec2
+    command: >
+      ./CarlaUE4.sh
+      -RenderOffScreen
+      -nosound
+      -quality-level=Low
+      -carla-rpc-port=3200
+      -carla-primary-host=primary
+      -carla-primary-port=2002
+      -ini:[/Script/Engine.RendererSettings]:r.GraphicsAdapter=2
+      -prefernvidia
+    environment:
+      <<: *common-env
+      NVIDIA_VISIBLE_DEVICES: "2"
+    ports: ["3200:3200","3201:3201"]
+    networks: [carla_net]
+    restart: unless-stopped
+
+  sec3:
+    image: *carla-image
+    container_name: carla_sec3
+    command: >
+      ./CarlaUE4.sh
+      -RenderOffScreen
+      -nosound
+      -quality-level=Low
+      -carla-rpc-port=3300
+      -carla-primary-host=primary
+      -carla-primary-port=2002
+      -ini:[/Script/Engine.RendererSettings]:r.GraphicsAdapter=3
+      -prefernvidia
+    environment:
+      <<: *common-env
+      NVIDIA_VISIBLE_DEVICES: "3"
+    ports: ["3300:3300","3301:3301"]
+    networks: [carla_net]
+    restart: unless-stopped
+
+  sec4:
+    image: *carla-image
+    container_name: carla_sec4
+    command: >
+      ./CarlaUE4.sh
+      -RenderOffScreen
+      -nosound
+      -quality-level=Low
+      -carla-rpc-port=3400
+      -carla-primary-host=primary
+      -carla-primary-port=2002
+      -ini:[/Script/Engine.RendererSettings]:r.GraphicsAdapter=4
+      -prefernvidia
+    environment:
+      <<: *common-env
+      NVIDIA_VISIBLE_DEVICES: "4"
+    ports: ["3400:3400","3401:3401"]
+    networks: [carla_net]
+    restart: unless-stopped
+
+  sec5:
+    image: *carla-image
+    container_name: carla_sec5
+    command: >
+      ./CarlaUE4.sh
+      -RenderOffScreen
+      -nosound
+      -quality-level=Low
+      -carla-rpc-port=3500
+      -carla-primary-host=primary
+      -carla-primary-port=2002
+      -ini:[/Script/Engine.RendererSettings]:r.GraphicsAdapter=5
+      -prefernvidia
+    environment:
+      <<: *common-env
+      NVIDIA_VISIBLE_DEVICES: "5"
+    ports: ["3500:3500","3501:3501"]
+    networks: [carla_net]
+    restart: unless-stopped
+
+  sec6:
+    image: *carla-image
+    container_name: carla_sec6
+    command: >
+      ./CarlaUE4.sh
+      -RenderOffScreen
+      -nosound
+      -quality-level=Low
+      -carla-rpc-port=3600
+      -carla-primary-host=primary
+      -carla-primary-port=2002
+      -ini:[/Script/Engine.RendererSettings]:r.GraphicsAdapter=6
+      -prefernvidia
+    environment:
+      <<: *common-env
+      NVIDIA_VISIBLE_DEVICES: "6"
+    ports: ["3600:3600","3601:3601"]
+    networks: [carla_net]
+    restart: unless-stopped
+
+  sec7:
+    image: *carla-image
+    container_name: carla_sec7
+    command: >
+      ./CarlaUE4.sh
+      -RenderOffScreen
+      -nosound
+      -quality-level=Low
+      -carla-rpc-port=3700
+      -carla-primary-host=primary
+      -carla-primary-port=2002
+      -ini:[/Script/Engine.RendererSettings]:r.GraphicsAdapter=7
+      -prefernvidia
+    environment:
+      <<: *common-env
+      NVIDIA_VISIBLE_DEVICES: "7"
+    ports: ["3700:3700","3701:3701"]
+    networks: [carla_net]
+    restart: unless-stopped
